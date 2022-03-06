@@ -2,7 +2,7 @@ const { ErrorHandler } = require('../Handler')
 const { StatusCodes } = require('../Values')
 const mongoose = require('mongoose')
 
-class RestaurantCategoryValidator {
+class CategoryValidator {
 
     async validateCreateCategory({ name }) {
         if (typeof name !== 'string' || !name) throw new ErrorHandler({ statusCode: StatusCodes.ERROR_PARAM, httpCode: 400 })
@@ -17,7 +17,6 @@ class RestaurantCategoryValidator {
 
         if (!mongoose.isValidObjectId(id)) throw new ErrorHandler({ statusCode: StatusCodes.ERROR_PARAM, httpCode: 400 })
     }
-    
-}
 
-module.exports = new RestaurantCategoryValidator()
+}
+module.exports = new CategoryValidator()

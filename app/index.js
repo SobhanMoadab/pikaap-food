@@ -1,10 +1,11 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const app = express();
-const v1 = require("./Routes/v1");
+const express = require("express")
+const mongoose = require("mongoose")
+const v1 = require("./Routes/v1")
 const cors = require("cors")
 const ErrorHandler = require('./Handler/ErrorHandler')
 const StatusCodes = require('./Values/StatusCodes')
+const app = express()
+
 require("dotenv").config()
 app.use(cors())
 app.use(express.json())
@@ -20,24 +21,25 @@ app.use(express.json())
 //   authSource: MONGOOSE_DATABASE_NAME,
 //   useUnifiedTopology: true,
 // }
-MONGOOSE_CONNECTION_URL = 'mongodb://localhost/pikaapFood'
+const MONGOOSE_CONNECTION_URL = 'mongodb://localhost/pikaapFood'
 mongoose
     .connect(MONGOOSE_CONNECTION_URL)
-    .then(async (result) => {
+    .then(async () => {
         console.log('Mongoose connected')
     })
     .catch((err) => {
         console.log({ MONGO_ERROR: err })
     })
 
-app.use("/api/v1", v1);
+app.use("/api/v1", v1)
 app.use((err, req, res, next) => {
     if (err instanceof ErrorHandler) {
-        console.log({ err })
-        res.status(err.httpCode).json({ httpCode: err.httpCode, statusCode: err.statusCode });
+        const { result = '' } = err
+        res.status(err.httpCode).json({ httpCode: err.httpCode, statusCode: err.statusCode, result})
     } else {
         console.log({ err })
-        res.status(500).json({ statusCode: StatusCodes.ERROR_INTERNAL });
+        res.status(500).json({ statusCode: StatusCodes.ERROR_INTERNAL })
     }
 });
-module.exports = app;
+
+module.exports = app
