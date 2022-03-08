@@ -20,7 +20,7 @@ class ProductController {
         // validate
         await this.productValidator.validateCreateProduct(req.body)
         const foundedCategory = await this.categoryService.getById({ categoryId })
-        if (!foundedCategory) throw new ErrorHandler({ statusCode: StatusCodes.ERROR_NOT_FOUND, httpCode: 404 })
+        if (!foundedCategory) throw new ErrorHandler({ statusCode: StatusCodes.ERROR_NOT_FOUND, httpCode: 404, result: 'Failed to find category' })
 
         // create product
         const result = await this.productService.createProduct({ name, recipe, fee, category: { _id: foundedCategory._id, categoryName: foundedCategory.name } })
@@ -82,8 +82,10 @@ class ProductController {
         if (!result) throw new ErrorHandler({ statusCode: StatusCodes.ERROR_NOT_FOUND, httpCode: 404 })
 
         else {
-            await this.categoryService.removeProductFromCategory({ categoryId: result.category._id, productId: result._id })
-            await this.productService.deleteProduct({ productId })
+            await Promise.all([
+                this.categoryService.removeProductFromCategory({ categoryId: result.category._id, productId: result._id }),
+                this.productService.deleteProduct({ productId })
+            ])
             return ResponseHandler.send({ res, httpCode: 200, statusCode: StatusCodes.RESPONSE_SUCCESSFUL, result: 'Product deleted' })
         }
     }

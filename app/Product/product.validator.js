@@ -33,5 +33,7 @@ class ProductValidator {
 
         if (!mongoose.isValidObjectId(id)) throw new ErrorHandler({ statusCode: StatusCodes.ERROR_PARAM, httpCode: 400 })
     }
+
+   
 }
 module.exports = new ProductValidator()

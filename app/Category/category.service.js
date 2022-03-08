@@ -42,8 +42,8 @@ class CategoryService {
         return await this.categoryRepository.addProductToCategory({ categoryId, productData })
     }
 
-    async removeProductFromCategory({categoryId, productId}){
-         await this.categoryRepository.removeProductFromCategory({categoryId, productId})
+    async removeProductFromCategory({ categoryId, productId }) {
+        await this.categoryRepository.removeProductFromCategory({ categoryId, productId })
     }
 }
 
