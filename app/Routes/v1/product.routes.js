@@ -1,5 +1,5 @@
 const express = require("express")
-const { ProductController } = require("../../Product")
+const {ProductController} = require("../../Product")
 
 const router = express.Router()
 const use = (fn) => (req, res, next) => {
@@ -9,6 +9,7 @@ const use = (fn) => (req, res, next) => {
 router.post("/", use(ProductController.createProduct.bind(ProductController)))
 router.put("/:productId", use(ProductController.updateProduct.bind(ProductController)))
 router.get("/", use(ProductController.getProducts.bind(ProductController)))
+router.get("/disable", use(ProductController.toggleDisable.bind(ProductController)))
 router.get("/:productId", use(ProductController.getProductById.bind(ProductController)))
 router.delete("/:productId", use(ProductController.deleteProduct.bind(ProductController)))
 

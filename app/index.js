@@ -17,9 +17,12 @@ const redisClient = redis.createClient({
     port: 6379,
     legacyMode: true
 })
-redisClient.on('connect', () => console.log('Connected to Redis!'));
-redisClient.on('error', (err) => console.log('Redis Client Error', err));
 redisClient.connect();
+redisClient.on('error', (err) => console.log('Redis Client Error', err));
+redisClient.on('connect', async function () {
+    await redisClient.flushAll()
+    console.log('Redis Connected')
+})
 
 app.use(session({
     store: new RedisStore({ client: redisClient }),
