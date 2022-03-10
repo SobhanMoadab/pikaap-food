@@ -1,10 +1,14 @@
 const Order = require('./order.model')
 const UtilService = require('../Utils/util.service')
+const {Types} = require('mongoose')
+
 class OrderRepository {
     constructor(utilService) {
         this.utilService = utilService
     }
-    async createOrder({ cart, items, restaurantId, customerId }) {
+
+    async createOrder({cart, items, restaurantId, customerId}) {
+        console.log({cart})
         const products = []
         Object.keys(items).forEach(key => {
             let productObject = {
@@ -23,10 +27,102 @@ class OrderRepository {
         }).save()
     }
 
-    async getOrdersByRestaurant({ page, restaurantId }) {
-        console.log({page, restaurantId})
+    async getOrdersByRestaurant({page, restaurantId}) {
         let result
-        page ? result = await Order.paginate({ restaurantId }, { limit: 10, page, }) : result = await Order.find({ restaurantId })
+        page ? result = await Order.paginate({restaurantId}, {
+            limit: 10,
+            page,
+        }) : result = await Order.find({restaurantId})
+        return result
+    }
+
+    async countOrders({restaurantId, filter}) {
+        const date = new Date()
+        let end = new Date()
+        const startLastDay = new Date(Date.now() - 86400000)
+        const startLastWeek = new Date(Date.now() - 604800000)
+        const startLastMonth = new Date(Date.now() - 18144000000)
+
+        const result = await Order.aggregate([
+            {$match: {restaurantId: Types.ObjectId(restaurantId)}},
+            {
+                $facet: {
+                    "todayTotalCount": [
+                        {
+                            $match: {
+                                "createdAt": {
+                                    $gte: startLastDay,
+                                    $lt: end
+                                }
+                            }
+                        },
+                        {$count: "count"}],
+                    "todayTotalSell": [
+                        {
+                            $match: {
+                                "createdAt": {
+                                    $gte: startLastDay,
+                                    $lt: end
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id: "$_id", todayTotalSell: {$sum: "$foodsPrice"}
+                            }
+                        }],
+                    "lastWeekTotalCount": [
+                        {
+                            $match: {
+                                "createdAt": {
+                                    $gte: startLastWeek,
+                                    $lt: end
+                                }
+                            }
+                        },
+                        {$count: "count"}
+                    ],
+                    "lastWeekTotalSell": [
+                        {
+                            $match: {
+                                "createdAt": {
+                                    $gte: startLastWeek,
+                                    $lt: end
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id: "$_id", todayTotalSell: {$sum: "$foodsPrice"}
+                            }
+                        }
+                    ],
+                    "lastMonthTotalCount": [
+                        {
+                            $match: {
+                                "createdAt": {
+                                    $gte: startLastMonth,
+                                    $lt: end
+                                }
+                            }
+                        }, {$count: "count"}],
+                    "lastMonthTotalSell": [
+                        {
+                            $match: {
+                                "createdAt": {
+                                    $gte: startLastMonth,
+                                    $lt: end
+                                }
+                            }
+                        }, {
+                            $group: {
+                                _id: "$_id", todayTotalSell: {$sum: "$foodsPrice"}
+
+                            }
+                        }
+                    ]
+                }
+            }
+
+        ])
         return result
     }
 }

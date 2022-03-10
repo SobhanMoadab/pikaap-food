@@ -1,20 +1,44 @@
-const { default: mongoose } = require("mongoose")
-const { ErrorHandler } = require("../Handler")
-const { StatusCodes } = require("../Values")
+const {default: mongoose} = require("mongoose")
+const {ErrorHandler} = require("../Handler")
+const {StatusCodes} = require("../Values")
 
 class OrderValidator {
 
-    async validateCreateOrder({ restaurantId }) {
-        if (!restaurantId || !mongoose.isValidObjectId(restaurantId)) throw new ErrorHandler({ httpCode: 400, statusCode: StatusCodes.ERROR_PARAM, result: 'Param error' })
+    async validateCreateOrder({restaurantId}) {
+        if (!restaurantId || !mongoose.isValidObjectId(restaurantId)) throw new ErrorHandler({
+            httpCode: 400,
+            statusCode: StatusCodes.ERROR_PARAM,
+            result: 'Param error'
+        })
     }
+
     async validatePageQuery(page) {
 
-        if (typeof page !== 'number') throw new ErrorHandler({ statusCode: StatusCodes.ERROR_PARAM, httpCode: 400, result: 'Query param error' })
+        if (typeof page !== 'number') throw new ErrorHandler({
+            statusCode: StatusCodes.ERROR_PARAM,
+            httpCode: 400,
+            result: 'Query param error'
+        })
 
     }
+
     async isValidMongoose(id) {
 
-        if (!mongoose.isValidObjectId(id)) throw new ErrorHandler({ statusCode: StatusCodes.ERROR_PARAM, httpCode: 400, result: 'Query param error' })
+        if (!mongoose.isValidObjectId(id)) throw new ErrorHandler({
+            statusCode: StatusCodes.ERROR_PARAM,
+            httpCode: 400,
+            result: 'Query param error'
+        })
+    }
+
+    async validateCountOrders({filter}) {
+        if (!filter || filter !== 'TODAY' && filter !== 'WEEK' && filter !== 'MONTH') {
+            throw new ErrorHandler({
+                statusCode: StatusCodes.ERROR_PARAM,
+                httpCode: 400,
+                result: 'Query param error'
+            })
+        }
     }
 }
 
