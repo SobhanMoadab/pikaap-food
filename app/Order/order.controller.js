@@ -11,6 +11,18 @@ class OrderController {
         this.orderValidator = orderValidator
     }
 
+    async getOrderByTrackingCode(req, res) {
+        const {trackingCode} = req.query
+        await this.orderValidator.validateGetOrderByTrackingCode(req.query)
+        const result = await this.orderService.getOrderByTrackingCode({trackingCode})
+        return ResponseHandler.send({
+            res,
+            httpCode: 200,
+            statusCode: StatusCodes.RESPONSE_SUCCESSFUL,
+            result
+        })
+    }
+
     async createOrder(req, res) {
         if (!req.session.cart) throw new ErrorHandler({
             httpCode: 400,
@@ -24,6 +36,7 @@ class OrderController {
         const cart = new Cart(session)
         const items = cart.getItems()
         await this.orderService.createOrder({cart, items, restaurantId, customerId})
+        req.session.destroy()
         return ResponseHandler.send({
             res,
             httpCode: 200,
@@ -44,10 +57,8 @@ class OrderController {
     }
 
     async countOrders(req, res) {
-        const {filter} = req.query
         const restaurantId = req.userId
-        await this.orderValidator.validateCountOrders(req.query)
-        const result = await this.orderService.countOrders({restaurantId, filter})
+        const result = await this.orderService.countOrders({restaurantId})
         return ResponseHandler.send({
             res,
             httpCode: 200,

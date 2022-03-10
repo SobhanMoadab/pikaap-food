@@ -31,15 +31,14 @@ class OrderValidator {
         })
     }
 
-    async validateCountOrders({filter}) {
-        if (!filter || filter !== 'TODAY' && filter !== 'WEEK' && filter !== 'MONTH') {
-            throw new ErrorHandler({
-                statusCode: StatusCodes.ERROR_PARAM,
-                httpCode: 400,
-                result: 'Query param error'
-            })
-        }
+    async validateGetOrderByTrackingCode({trackingCode}) {
+        if (!trackingCode) throw new ErrorHandler({
+            statusCode: StatusCodes.ERROR_PARAM,
+            httpCode: 400,
+            result: 'Query param error'
+        })
     }
+
 }
 
 module.exports = new OrderValidator()

@@ -10,6 +10,7 @@ const use = (fn) => (req, res, next) => {
 router.post("/create", use(OrderController.createOrder.bind(OrderController)))
 router.get("/restaurant-list", use(OrderController.getOrdersByRestaurant.bind(OrderController)))
 router.get("/count", use(OrderController.countOrders.bind(OrderController)))
+router.get("/tracking", use(OrderController.getOrderByTrackingCode.bind(OrderController)))
 // router.post("/remove/:productId", use(OrderController.removeItem.bind(OrderController)))
 // router.post("/reduce/:productId", use(OrderController.reduceItemFromCart.bind(OrderController)))
 

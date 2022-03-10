@@ -36,8 +36,7 @@ class OrderRepository {
         return result
     }
 
-    async countOrders({restaurantId, filter}) {
-        const date = new Date()
+    async countOrders({restaurantId}) {
         let end = new Date()
         const startLastDay = new Date(Date.now() - 86400000)
         const startLastWeek = new Date(Date.now() - 604800000)
@@ -125,6 +124,13 @@ class OrderRepository {
         ])
         return result
     }
+
+    async getOrderByTrackingCode({trackingCode}) {
+        const result = await Order.findOne({trackingCode})
+        return result
+    }
+
+
 }
 
 module.exports = new OrderRepository(UtilService)

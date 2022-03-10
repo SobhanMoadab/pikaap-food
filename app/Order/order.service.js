@@ -14,8 +14,12 @@ class OrderService {
         return await this.orderRepository.getOrdersByRestaurant({page, restaurantId})
     }
 
-    async countOrders({restaurantId, filter}) {
-        return await this.orderRepository.countOrders({restaurantId, filter})
+    async countOrders({restaurantId}) {
+        return await this.orderRepository.countOrders({restaurantId})
+    }
+
+    async getOrderByTrackingCode({trackingCode}) {
+        return await this.orderRepository.getOrderByTrackingCode({trackingCode})
     }
 }
 
